@@ -1,0 +1,237 @@
+<%- include('partials/header') %>
+
+<div class="dashboard-grid animate-fade-in">
+  
+  <!-- LEFT SIDEBAR: PROFILE STATS SLOT -->
+  <aside class="dashboard-sidebar-left">
+    <div class="card profile-widget">
+      <div class="profile-widget-hero">
+        <div class="avatar avatar-large">
+          <%= locals.user.username.substring(0, 1).toUpperCase() %>
+        </div>
+      </div>
+      <div class="profile-widget-body">
+        <h3><a href="/profile/<%= locals.user.username %>">@<%= locals.user.username %></a></h3>
+        <span class="badge badge-accent">
+          <i data-lucide="target"></i> <%= locals.user.fitnessGoal %>
+        </span>
+        <p class="profile-widget-bio">
+          <%= locals.user.bio || 'No workout bio saved yet. Tap "Gym Profile" to create one!' %>
+        </p>
+      </div>
+      <div class="profile-widget-footer">
+        <a href="/profile/<%= locals.user.username %>" class="btn btn-navy-outline btn-block btn-sm">
+          <i data-lucide="settings"></i> Manage Gym Profile
+        </a>
+      </div>
+    </div>
+
+    <!-- MOTIVATIONAL QUOTE OF THE DAY BOX -->
+    <div class="card motivation-box">
+      <div class="card-header-icon text-orange">
+        <i data-lucide="flame"></i>
+      </div>
+      <h3>Metric Boost</h3>
+      <p id="motivationalQuote">"Success isn't always about greatness. It's about consistency. Consistent hard work leads to success. Greatness will come."</p>
+      <small>&mdash; Dwayne Johnson</small>
+    </div>
+  </aside>
+
+  <!-- CENTER LOG FEED -->
+  <section class="dashboard-feed">
+    
+    <!-- POST DESIGN BOX -->
+    <div class="card create-post-card">
+      <div class="card-body">
+        <form action="/posts" method="POST" enctype="multipart/form-data" class="post-form">
+          <div class="post-author-row">
+            <div class="avatar avatar-sm">
+              <%= locals.user.username.substring(0, 1).toUpperCase() %>
+            </div>
+            <textarea name="content" id="postContent" placeholder="Log your workout, meal query, or PR success today..." required></textarea>
+          </div>
+          
+          <!-- Collapsible Advanced Upload Box (URLs + Local Files) -->
+          <div class="post-attachments" id="postAttachments" style="display: none;">
+            <div class="attachment-input-group">
+              <label for="postImage"><i data-lucide="image"></i> Upload Local Image (Max 5MB)</label>
+              <input type="file" id="postImage" name="postImage" accept="image/*">
+            </div>
+            <div class="attachment-or-divider"><span>OR</span></div>
+            <div class="attachment-input-group">
+              <label for="imageUrl"><i data-lucide="link"></i> Paste Image Web Link/URL</label>
+              <input type="url" id="imageUrl" name="imageUrl" placeholder="https://images.unsplash.com/photo-...">
+            </div>
+          </div>
+
+          <div class="post-actions-row">
+            <button type="button" class="btn btn-light btn-sm" id="toggleAttachmentBtn" title="Add Image">
+              <i data-lucide="camera"></i> <span>Add Workout Pic</span>
+            </button>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <i data-lucide="send"></i> Log Activity
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- FILTER CARDS BAR -->
+    <div class="feed-tabs">
+      <a href="/?tab=community" class="feed-tab <%= activeTab === 'community' ? 'active' : '' %>">
+        <i data-lucide="globe"></i> Community Log Feed
+      </a>
+      <a href="/?tab=following" class="feed-tab <%= activeTab === 'following' ? 'active' : '' %>">
+        <i data-lucide="star"></i> Following Feed
+      </a>
+    </div>
+
+    <!-- MAIN FEEDS LOOP -->
+    <div class="feed-posts">
+      <% if (posts.length === 0) { %>
+        <div class="card no-posts-card animate-scale-in">
+          <i data-lucide="dumbbell" class="no-posts-icon"></i>
+          <h3>No Workout Logs Logged Yet</h3>
+          <% if (activeTab === 'following') { %>
+            <p>You aren't following anyone who has posted yet, or you haven't followed other users. Head to the Discover tab to find your squad!</p>
+            <a href="/discover" class="btn btn-primary"><i data-lucide="compass"></i> Discover Gym Pals</a>
+          <% } else { %>
+            <p>The community log feed is silent. Be the catalyst and post your current workout session!</p>
+          <% } %>
+        </div>
+      <% } else { %>
+        <% posts.forEach(post => { %>
+          <article class="card post-article animate-slide-in" data-post-id="<%= post._id %>">
+            <header class="post-header">
+              <div class="post-meta-left">
+                <a href="/profile/<%= post.user.username %>" class="avatar">
+                  <%= post.user.username.substring(0, 1).toUpperCase() %>
+                </a>
+                <div class="post-author-info">
+                  <h4>
+                    <a href="/profile/<%= post.user.username %>" class="post-author-link">@<%= post.user.username %></a>
+                  </h4>
+                  <p class="post-author-goal">
+                    <i data-lucide="trophy" class="icon-inline"></i> <%= post.user.fitnessGoal || 'General Wellness' %>
+                  </p>
+                </div>
+              </div>
+              
+              <div class="post-meta-right">
+                <span class="post-time" title="<%= post.createdAt.toLocaleString() %>">
+                  <i data-lucide="clock" class="icon-inline"></i> <%= post.createdAt.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                </span>
+                
+                <% if (post.user && post.user._id && (post.user._id === locals.user._id || post.user._id.toString() === locals.user._id)) { %>
+                  <form action="/posts/<%= post._id %>/delete" method="POST" class="delete-post-form" onsubmit="return confirm('Do you want to delete this fitness log from your feed?');">
+                    <button type="submit" class="btn-icon-trash" title="Delete Log">
+                      <i data-lucide="trash-2"></i>
+                    </button>
+                  </form>
+                <% } %>
+              </div>
+            </header>
+
+            <div class="post-body">
+              <p class="post-text"><%= post.content %></p>
+              
+              <% if (post.image) { %>
+                <div class="post-image-container">
+                  <img src="<%= post.image %>" alt="Logged workout session photo" class="post-image" referrerPolicy="no-referrer" onerror="this.style.display='none'">
+                </div>
+              <% } %>
+            </div>
+
+            <!-- Interactivity buttons panel -->
+            <footer class="post-footer">
+              <div class="post-stats-row">
+                <!-- Likes AJAX Button -->
+                <button type="button" class="post-stat-btn like-btn <%= post.likes.includes(locals.user._id) ? 'liked' : '' %>" onclick="toggleLike('<%= post._id %>')">
+                  <i data-lucide="heart"></i>
+                  <span class="like-label">Like</span>
+                  <span class="like-count"><%= post.likes.length %></span>
+                </button>
+
+                <!-- Comments Display Button -->
+                <button type="button" class="post-stat-btn comment-toggle-btn" onclick="toggleCommentsSection('<%= post._id %>')">
+                  <i data-lucide="message-square"></i>
+                  <span>Comments (<span class="comment-count"><%= post.comments.length %></span>)</span>
+                </button>
+              </div>
+
+              <!-- SLIDING REPLIES / COMMENTS CONTAINER -->
+              <section class="post-comments-section" id="comments-<%= post._id %>" style="display: none;">
+                <div class="comments-list" id="comments-list-<%= post._id %>">
+                  <% if (post.comments.length === 0) { %>
+                    <p class="no-comments-info">No commentaries on this workout log yet. Add structural feedback below!</p>
+                  <% } else { %>
+                    <% post.comments.forEach(comment => { %>
+                      <div class="comment-item">
+                        <div class="comment-avatar">
+                          <%= comment.user.username.substring(0, 1).toUpperCase() %>
+                        </div>
+                        <div class="comment-bubble">
+                          <div class="comment-top">
+                            <span class="comment-author">@<%= comment.user.username %></span>
+                            <span class="comment-time"><%= comment.createdAt.toLocaleDateString(undefined, {month:'short', day:'numeric'}) %></span>
+                          </div>
+                          <p class="comment-text"><%= comment.content %></p>
+                        </div>
+                      </div>
+                    <% }) %>
+                  <% } %>
+                </div>
+
+                <!-- ADD COMMENT FORM -->
+                <form action="/posts/<%= post._id %>/comment" method="POST" class="comment-form" onsubmit="submitCommentForm(event, '<%= post._id %>')">
+                  <input type="text" name="content" class="comment-input" placeholder="Congratulate, give form advice, or reply..." required>
+                  <button type="submit" class="btn btn-primary btn-xs">
+                    <i data-lucide="corner-down-left"></i> Comment
+                  </button>
+                </form>
+              </section>
+            </footer>
+          </article>
+        <% }) %>
+      <% } %>
+    </div>
+  </section>
+
+  <!-- RIGHT SIDEBAR: OTHER PEERS & METRIC TIPS -->
+  <aside class="dashboard-sidebar-right">
+    <div class="card discover-mini-widget">
+      <div class="card-header">
+        <h3><i data-lucide="sparkles" class="text-green"></i> Community Pals</h3>
+        <p>Enthusiasts around you</p>
+      </div>
+      <div class="card-body">
+        <div id="mini-discover-list">
+          <p class="loading-placeholder">Loading peer rosters...</p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="/discover" class="btn btn-navy-outline btn-block btn-sm">
+          <i data-lucide="compass"></i> Explore All Members
+        </a>
+      </div>
+    </div>
+
+    <!-- CALORIE / GOAL CALCULATOR CARD -->
+    <div class="card bmr-calc-widget">
+      <h3><i data-lucide="calculator" class="text-orange"></i> Quick Macro Metric</h3>
+      <p>Estimate your daily maintenance calories instantly.</p>
+      
+      <div class="bmr-form">
+        <div class="form-group-row">
+          <input type="number" id="bmrWeight" placeholder="lbs" title="Weight in pounds">
+          <input type="number" id="bmrAge" placeholder="age" title="Age in years">
+        </div>
+        <button class="btn btn-orange btn-block btn-xs" onclick="calculateBmr()">Calculate kcal</button>
+        <p id="bmrResult" class="bmr-result-text" style="display: none;"></p>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<%- include('partials/footer') %>

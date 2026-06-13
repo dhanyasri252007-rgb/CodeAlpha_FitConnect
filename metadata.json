@@ -1,0 +1,6 @@
+{
+  "name": "FitConnect",
+  "description": "FitConnect is a full-stack fitness-themed social media platform for tracking goals, sharing status updates, following peers, and building a supportive fitness community.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

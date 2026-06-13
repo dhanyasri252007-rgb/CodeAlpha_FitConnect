@@ -1,0 +1,33 @@
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="logo">
+          <i data-lucide="zap" class="logo-icon"></i>
+          <span>Fit<span>Connect</span></span>
+        </div>
+        <p class="footer-tagline">Fuel your passion. Log your metrics. Support the community.</p>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <%= new Date().getFullYear() %> FitConnect. Created with pure full-stack Node.js + MongoDB. No external UI frameworks.</p>
+        <div class="footer-badges">
+          <span class="badge badge-pulse"><i data-lucide="shield"></i> Secure Session Auth</span>
+          <span class="badge"><i data-lucide="database"></i> High Speed Store</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core Client-Side Logic -->
+  <script src="/js/main.js"></script>
+
+  <!-- Initialize Lucide Vector Icons and animations -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Create lovely vector icons
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

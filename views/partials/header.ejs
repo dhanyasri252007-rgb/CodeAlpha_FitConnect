@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitConnect - Premium Fitness Social Network</title>
+  <!-- Google Fonts: Inter as primary, plus dynamic display typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Custom Creative Athletic Style Theme Sheet -->
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Lucide Vector Icons Library CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Premium Gym Core Navigation Header -->
+  <header class="header">
+    <div class="header-container">
+      <a href="/" class="logo">
+        <i data-lucide="zap" class="logo-icon animate-pulse"></i>
+        <span>Fit<span>Connect</span></span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <i data-lucide="menu"></i>
+      </button>
+
+      <nav class="nav-menu" id="navMenu">
+        <% if (locals.user && locals.user._id) { %>
+          <a href="/" class="nav-link <%= typeof activeTab !== 'undefined' ? 'active' : '' %>">
+            <i data-lucide="activity"></i> Feed
+          </a>
+          <a href="/discover" class="nav-link">
+            <i data-lucide="users"></i> Discover Peers
+          </a>
+          <a href="/profile/<%= locals.user.username %>" class="nav-link">
+            <i data-lucide="user"></i> Gym Profile
+          </a>
+          <!-- Logged in status tag -->
+          <div class="nav-user-status">
+            <span class="user-pill">
+              <i data-lucide="award" class="user-pill-icon"></i>
+              <%= locals.user.username %>
+            </span>
+          </div>
+          <a href="/logout" class="btn btn-navy-outline nav-logout-btn">
+            <i data-lucide="log-out"></i> Logout
+          </a>
+        <% } else { %>
+          <a href="/login" class="nav-link">Log In</a>
+          <a href="/register" class="btn btn-primary">Join FitConnect</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Container for Toast Notifications & General Alerts -->
+  <main class="main-content">
+    <% if (locals.error) { %>
+      <div class="alert alert-danger animate-slide-in">
+        <i data-lucide="alert-triangle"></i>
+        <span><%= error %></span>
+        <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+      </div>
+    <% } %>
+
+    <% if (locals.success) { %>
+      <div class="alert alert-success animate-slide-in">
+        <i data-lucide="check-circle"></i>
+        <span><%= success %></span>
+        <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+      </div>
+    <% } %>

@@ -1,0 +1,73 @@
+<%- include('partials/header') %>
+
+<div class="discover-container animate-fade-in">
+  <header class="discover-header">
+    <div class="discover-title-group">
+      <h1><i data-lucide="compass" class="text-green logo-icon"></i> Community Members</h1>
+      <p>Discover other athletes, powerlifters, runners, and healers. Support their journey to motivate each other.</p>
+    </div>
+  </header>
+
+  <!-- SEARCH FILTERS (CLIENT SIDE) -->
+  <div class="card discover-filter-card">
+    <div class="discover-search-row">
+      <div class="search-input-wrapper">
+        <i data-lucide="search" class="search-icon"></i>
+        <input type="text" id="memberSearch" placeholder="Search athletes by username, fitness goals, etc..." onkeyup="filterPeers()">
+      </div>
+      <div class="filter-count-badge">
+        <span id="activeMembersCount"><%= users.length %></span> profiles found
+      </div>
+    </div>
+  </div>
+
+  <!-- PEERS CARD GRID INDEX -->
+  <div class="discover-peers-grid" id="peersGrid">
+    <% if (users.length === 0) { %>
+      <div class="card no-posts-card grid-full-span">
+        <i data-lucide="users" class="no-posts-icon"></i>
+        <h3>No Other Athletes Registered Yet</h3>
+        <p>You are the pioneer! Once other enthusiasts register their accounts, they will pop up instantly.</p>
+      </div>
+    <% } else { %>
+      <% users.forEach(peer => { %>
+        <div class="card peer-card animate-scale-in" data-username="<%= peer.username %>" data-goal="<%= peer.fitnessGoal %>">
+          <div class="peer-card-body">
+            <div class="peer-avatar">
+              <%= peer.username.substring(0,1).toUpperCase() %>
+            </div>
+            
+            <a href="/profile/<%= peer.username %>" class="peer-username">@<%= peer.username %></a>
+            
+            <span class="badge badge-accent">
+              <i data-lucide="target"></i> <%= peer.fitnessGoal || 'General Strength' %>
+            </span>
+
+            <p class="peer-bio">
+              <%= peer.bio || 'Training silent. Letting results perform the noise.' %>
+            </p>
+          </div>
+
+          <div class="peer-card-footer">
+            <a href="/profile/<%= peer.username %>" class="btn btn-navy-outline btn-xs">
+              <i data-lucide="eye"></i> View Profile
+            </a>
+
+            <!-- AJAX Link for Fast Connects -->
+            <% if (peer.isFollowing) { %>
+              <button class="btn btn-orange-outline btn-xs follow-btn followed" onclick="togglePeerFollow(this, '<%= peer._id %>')">
+                <i data-lucide="user-minus"></i> Unfollow
+              </button>
+            <% } else { %>
+              <button class="btn btn-primary btn-xs follow-btn" onclick="togglePeerFollow(this, '<%= peer._id %>')">
+                <i data-lucide="user-plus"></i> Follow
+              </button>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

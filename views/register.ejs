@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<div class="auth-wrapper animate-fade-in">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon-circle bg-green">
+        <i data-lucide="sparkles"></i>
+      </div>
+      <h1>Create Gym Credentials</h1>
+      <p>Configure your workout goal and hook up with your squad.</p>
+    </div>
+
+    <!-- Alert triggers when error exists -->
+    <% if (locals.error) { %>
+      <div class="form-alert error">
+        <i data-lucide="shield-alert"></i>
+        <span><%= error %></span>
+      </div>
+    <% } %>
+
+    <form action="/register" method="POST" class="auth-form" id="registerForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="username"><i data-lucide="user"></i> Username</label>
+          <input type="text" id="username" name="username" placeholder="e.g. powerlifter99" required minlength="3">
+          <small class="form-help">At least 3 lowercase characters.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="email"><i data-lucide="mail"></i> Email Address</label>
+          <input type="email" id="email" name="email" placeholder="runner@fitconnect.org" required>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="password"><i data-lucide="lock"></i> Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required minlength="6">
+          <small class="form-help">Minimum 6 characters.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword"><i data-lucide="shield-check"></i> Confirm Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="fitnessGoal"><i data-lucide="award"></i> Current Fitness Goal</label>
+        <div class="select-wrapper">
+          <select id="fitnessGoal" name="fitnessGoal">
+            <option value="Fat Loss & Lean Muscle">🔥 Fat Loss & Lean Muscle</option>
+            <option value="Powerlifting & Bulking">💪 Powerlifting & Bulking</option>
+            <option value="Marathon & Cardio Training">🏃 Marathon & Cardio Training</option>
+            <option value="Calisthenics & Mobility">🧘 Calisthenics & Mobility</option>
+            <option value="General Strength & Wellness">⚡ General Strength & Wellness</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="bio"><i data-lucide="medal"></i> Fitness Bio / Workout Routine</label>
+        <textarea id="bio" name="bio" rows="3" placeholder="Tell us about yourself! (e.g. 'PR Bench: 225lbs. Training for a 10K. Love morning hikes.')"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">
+        <i data-lucide="user-plus"></i> Initialize Profile & Start
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already a member? <a href="/login">Sign In Here</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
